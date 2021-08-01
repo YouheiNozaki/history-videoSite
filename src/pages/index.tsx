@@ -2,8 +2,8 @@ import { Fragment, useEffect, useMemo } from 'react';
 import { QueryClient } from 'react-query';
 import { dehydrate } from 'react-query/hydration';
 import { useInView } from 'react-intersection-observer';
-import { useGetArticles } from '../hooks/useGetArticles';
-import { fetchArticles } from '../lib/fetchArticles';
+import { useGetArticles } from '../hooks/useGetBlogs';
+import { fetchArticles } from '../lib/fetchBlogs';
 
 export default function Home(): JSX.Element {
   const { data, isLoading, hasNextPage, fetchNextPage } = useGetArticles();
@@ -19,7 +19,7 @@ export default function Home(): JSX.Element {
     }
   }, [inView, fetchNextPage]);
 
-  const articles = useMemo(
+  const blogs = useMemo(
     () => data && data.pages.flatMap(({ contents }) => contents),
     [data],
   );
@@ -29,12 +29,10 @@ export default function Home(): JSX.Element {
   return (
     <div style={{ marginBottom: '100px' }}>
       <div>
-        {articles.map((content) => (
+        {blogs?.map((content) => (
           <Fragment key={content.id}>
-            <a href={content.url}>
-              <h3>{content.title}</h3>
-              <p>{content.publishedAt}</p>
-            </a>
+            <h3>{content.title}</h3>
+            <p>{content.publishedAt}</p>
           </Fragment>
         ))}
       </div>
@@ -46,7 +44,7 @@ export default function Home(): JSX.Element {
 export async function getStaticProps() {
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchInfiniteQuery('articles', fetchArticles);
+  await queryClient.prefetchInfiniteQuery('blog', fetchArticles);
 
   return {
     props: {

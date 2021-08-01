@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { useInfiniteQuery } from 'react-query';
 import { client } from '../lib/microcmsClient';
-import type { Articles } from '../types/article';
+import type { Blogs } from '../types/blog';
 
 export const useGetArticles = () => {
   const [articleCount, setArticleCount] = useState<number>(0);
   const fetchArticles = async (pageParam: number) => {
     setArticleCount((prevArticleCount) => prevArticleCount + pageParam);
 
-    const articles = await client.get<Articles>({
-      endpoint: 'articles',
+    const articles = await client.get<Blogs>({
+      endpoint: 'blog',
       queries: {
         offset: articleCount + pageParam,
       },
@@ -19,7 +19,7 @@ export const useGetArticles = () => {
   };
 
   return useInfiniteQuery(
-    ['articles'],
+    ['blog'],
     ({ pageParam = 0 }) => fetchArticles(pageParam),
     {
       staleTime: Infinity,
